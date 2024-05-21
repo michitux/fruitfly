@@ -61,15 +61,23 @@ public class BuilderGenerator {
     StringBuilder text = new StringBuilder(
       "public static class Builder {");
 
+    // Output all field declarations
     for( PsiRecordComponent component : components ){
       String fieldName = component.getName();
       String fieldType = component.getType().getCanonicalText();
 
       text.append("private ")
-        .append(fieldType)
-        .append(" ")
-        .append(fieldName)
-        .append(";");
+          .append(fieldType)
+          .append(" ")
+          .append(fieldName)
+          .append(";");
+    }
+
+    // Then output all methods
+    for( PsiRecordComponent component : components ){
+      String fieldName = component.getName();
+      String fieldType = component.getType().getCanonicalText();
+
       text.append("public Builder ")
         .append(fieldName)
         .append("(")

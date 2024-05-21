@@ -17,13 +17,12 @@ public class NestedRecordTestInput {
 
       public static class Builder {
           private String field1;
+          private String field2;
 
           public Builder field1(String field1) {
               this.field1 = field1;
               return this;
           }
-
-          private String field2;
 
           public Builder field2(String field2) {
               this.field2 = field2;
