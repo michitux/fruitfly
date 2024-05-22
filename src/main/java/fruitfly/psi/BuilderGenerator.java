@@ -7,15 +7,21 @@ import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiRecordComponent;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.psi.javadoc.PsiDocComment;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static fruitfly.ide.RecordMemberChooser.mapRecordComponentNames;
 
 public class BuilderGenerator {
+  private static final Pattern TRIM_PATTERN = Pattern.compile("(^[ \\n*]+)|([ \\n*]+$)");
 
   /**
    Delete and re-generate builder code in the given record class.
@@ -58,8 +64,15 @@ public class BuilderGenerator {
     PsiElementFactory elementFactory =
       JavaPsiFacade.getElementFactory(recordClass.getProject());
 
-    StringBuilder text = new StringBuilder(
-      "public static class Builder {");
+    // Write a generic JavaDoc comment for the builder that mentions the class it is built for
+
+      StringBuilder text = new StringBuilder();
+      text.append("/**\n")
+          .append(" * Builder for {@link ")
+          .append(recordClass.getName())
+          .append("}.\n")
+          .append(" */\n")
+          .append("public static class Builder {");
 
     // Output all field declarations
     for( PsiRecordComponent component : components ){
@@ -73,11 +86,30 @@ public class BuilderGenerator {
           .append(";");
     }
 
+    // Get the JavaDoc comment of the record class and extract a list of all parameter comments of the record
+    PsiDocComment docComment = recordClass.getDocComment();
+    Map<String, String> paramComments = Map.of();
+    if (docComment != null) {
+      paramComments = Arrays.stream(docComment.findTagsByName("param"))
+          .collect(Collectors.toMap(tag -> tag.getValueElement().getText(),
+              tag -> TRIM_PATTERN.matcher(tag.getText()).replaceAll("")));
+    }
+
     // Then output all methods
     for( PsiRecordComponent component : components ){
       String fieldName = component.getName();
       String fieldType = component.getType().getCanonicalText();
 
+      // Generate a JavaDoc comment for the method based on the parameter comment - use the param of the record if it
+      // is available
+      if (paramComments.containsKey(fieldName)) {
+        text.append("/**\n")
+            .append(" * ")
+            .append(paramComments.get(fieldName))
+            .append("\n")
+            .append(" * @return this\n")
+            .append(" */\n");
+      }
       text.append("public Builder ")
         .append(fieldName)
         .append("(")
@@ -95,6 +127,11 @@ public class BuilderGenerator {
     }
 
     // Append build method to Builder class
+    text.append("/**\n")
+        .append(" * @return a new instance of {@link ")
+        .append(recordClass.getName())
+        .append("} initialized with the values set on this builder\n")
+        .append(" */\n");
     text.append("public ")
       .append(recordClass.getName())
       .append(" build() {");
@@ -127,9 +164,13 @@ public class BuilderGenerator {
 
     // Generate the static builder() method that returns an instance of the
     // Builder class
-    String text = "public static Builder builder() {" +
-      "return new Builder();" +
-      "}";
+    String text = """
+        /**
+         * @return a new instance of the {@link Builder}
+         */
+        public static Builder builder() {
+        return new Builder();
+        }""";
 
     return elementFactory.createMethodFromText(
       text,
@@ -143,9 +184,12 @@ public class BuilderGenerator {
     PsiElementFactory elementFactory =
       JavaPsiFacade.getElementFactory(recordClass.getProject());
 
-    StringBuilder text = new StringBuilder(
-      "public Builder but() {");
-    text.append("return new Builder()");
+    StringBuilder text = new StringBuilder();
+    text.append("/**\n")
+        .append(" * @return a new instance of the {@link Builder} initialized with all values of this\n")
+        .append(" */\n")
+        .append("public Builder but() {")
+        .append("return new Builder()");
 
     for( PsiRecordComponent component : components ){
       String fieldName = component.getName();

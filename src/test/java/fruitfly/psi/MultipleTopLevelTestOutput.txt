@@ -4,14 +4,23 @@ public class MultipleTopLevelTestInput{
 }
 
 record RecordExample(String field1) {
+    /**
+     * @return a new instance of the {@link Builder}
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * @return a new instance of the {@link Builder} initialized with all values of this
+     */
     public Builder but() {
         return new Builder().field1(field1);
     }
 
+    /**
+     * Builder for {@link RecordExample}.
+     */
     public static class Builder {
         private String field1;
 
@@ -20,6 +29,9 @@ record RecordExample(String field1) {
             return this;
         }
 
+        /**
+         * @return a new instance of {@link RecordExample} initialized with the values set on this builder
+         */
         public RecordExample build() {
             return new RecordExample(this.field1);
         }

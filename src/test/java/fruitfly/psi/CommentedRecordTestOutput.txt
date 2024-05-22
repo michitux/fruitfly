@@ -7,14 +7,23 @@ public record CommentedRecordTestInput(
 ) {
   /* body comment */
 
+    /**
+     * @return a new instance of the {@link Builder}
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * @return a new instance of the {@link Builder} initialized with all values of this
+     */
     public Builder but() {
         return new Builder().field1(field1);
     }
 
+    /**
+     * Builder for {@link CommentedRecordTestInput}.
+     */
     public static class Builder {
         private String field1;
 
@@ -23,6 +32,9 @@ public record CommentedRecordTestInput(
             return this;
         }
 
+        /**
+         * @return a new instance of {@link CommentedRecordTestInput} initialized with the values set on this builder
+         */
         public CommentedRecordTestInput build() {
             return new CommentedRecordTestInput(this.field1);
         }

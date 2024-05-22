@@ -6,29 +6,55 @@ public class NestedRecordTestInput {
 
   }
 
+  /**
+   * Sample record with two fields.
+   *
+   * @param field1 the first field of {@link Sample}
+   * @param field2 the second field
+   */
   public record Sample(String field1, String field2){
+      /**
+       * @return a new instance of the {@link Builder}
+       */
       public static Builder builder() {
           return new Builder();
       }
 
+      /**
+       * @return a new instance of the {@link Builder} initialized with all values of this
+       */
       public Builder but() {
           return new Builder().field1(field1).field2(field2);
       }
 
+      /**
+       * Builder for {@link Sample}.
+       */
       public static class Builder {
           private String field1;
           private String field2;
 
+          /**
+           * @param field1 the first field of {@link Sample}
+           * @return this
+           */
           public Builder field1(String field1) {
               this.field1 = field1;
               return this;
           }
 
+          /**
+           * @param field2 the second field
+           * @return this
+           */
           public Builder field2(String field2) {
               this.field2 = field2;
               return this;
           }
 
+          /**
+           * @return a new instance of {@link Sample} initialized with the values set on this builder
+           */
           public Sample build() {
               return new Sample(this.field1, this.field2);
           }

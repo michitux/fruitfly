@@ -1,14 +1,23 @@
 package fruitfly.psi;
 
 public record SimpleRecordTestInput(String field1) {
+    /**
+     * @return a new instance of the {@link Builder}
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * @return a new instance of the {@link Builder} initialized with all values of this
+     */
     public Builder but() {
         return new Builder().field1(field1);
     }
 
+    /**
+     * Builder for {@link SimpleRecordTestInput}.
+     */
     public static class Builder {
         private String field1;
 
@@ -17,6 +26,9 @@ public record SimpleRecordTestInput(String field1) {
             return this;
         }
 
+        /**
+         * @return a new instance of {@link SimpleRecordTestInput} initialized with the values set on this builder
+         */
         public SimpleRecordTestInput build() {
             return new SimpleRecordTestInput(this.field1);
         }

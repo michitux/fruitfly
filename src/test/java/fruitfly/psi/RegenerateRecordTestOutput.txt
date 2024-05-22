@@ -19,14 +19,23 @@ public record RegenerateRecordTestInput(
   }
   // bottom body comment
 
+    /**
+     * @return a new instance of the {@link Builder}
+     */
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * @return a new instance of the {@link Builder} initialized with all values of this
+     */
     public Builder but() {
         return new Builder().field1(field1).field2(field2);
     }
 
+    /**
+     * Builder for {@link RegenerateRecordTestInput}.
+     */
     public static class Builder {
         private int field1;
         private String field2;
@@ -41,6 +50,9 @@ public record RegenerateRecordTestInput(
             return this;
         }
 
+        /**
+         * @return a new instance of {@link RegenerateRecordTestInput} initialized with the values set on this builder
+         */
         public RegenerateRecordTestInput build() {
             return new RegenerateRecordTestInput(this.field1, this.field2);
         }
