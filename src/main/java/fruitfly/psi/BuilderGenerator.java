@@ -196,7 +196,7 @@ public class BuilderGenerator {
       String fieldName = component.getName();
       text.append(".")
         .append(fieldName)
-        .append("(")
+        .append("(this.")
         .append(fieldName)
         .append(")");
     }

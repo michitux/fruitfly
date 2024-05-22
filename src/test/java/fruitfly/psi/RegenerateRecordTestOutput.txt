@@ -30,7 +30,7 @@ public record RegenerateRecordTestInput(
      * @return a new instance of the {@link Builder} initialized with all values of this
      */
     public Builder but() {
-        return new Builder().field1(field1).field2(field2);
+        return new Builder().field1(this.field1).field2(this.field2);
     }
 
     /**
