@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiRecordComponent;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.javadoc.PsiDocComment;
 
@@ -203,9 +204,13 @@ public class BuilderGenerator {
     text.append(";");
     text.append("}");
 
-    return elementFactory.createMethodFromText(
-      text.toString(),
-      recordClass);
+    PsiMethod method = elementFactory.createMethodFromText(text.toString(), recordClass);
+
+    // Format the method according to the code style of the project.
+    CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(recordClass.getProject());
+    codeStyleManager.reformat(method);
+
+    return method;
   }
 
   /**
@@ -270,6 +275,9 @@ public class BuilderGenerator {
       JavaCodeStyleManager.getInstance(recordClass.getProject());
     styleManager.shortenClassReferences(builderClass);
     styleManager.optimizeImports(recordClass.getContainingFile());
+
+    CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(recordClass.getProject());
+    codeStyleManager.reformat(builderClass);
   }
 
 
